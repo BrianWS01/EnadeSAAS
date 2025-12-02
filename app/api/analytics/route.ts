@@ -29,7 +29,15 @@ export async function GET(request: NextRequest) {
     const hasDecline = IndicatorsEngine.detectDecline(results);
     const hasGrowth = IndicatorsEngine.detectGrowth(results);
 
-    const historicalData = results.map((r) => ({
+    type EnadeResultData = {
+      year: number;
+      generalNote: number | null;
+      generalFormation: number | null;
+      specificKnowledge: number | null;
+      idd: number | null;
+    };
+
+    const historicalData = results.map((r: EnadeResultData) => ({
       year: r.year,
       generalNote: r.generalNote,
       generalFormation: r.generalFormation,
