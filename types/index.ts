@@ -42,7 +42,7 @@ export interface EnadeResult {
   nationalAverage: number | null;
   regionalAverage: number | null;
   stateAverage: number | null;
-  rawData?: Record<string, unknown> | null;
+  rawData?: any;
   course?: Course;
   competencies?: Competency[];
   questionResults?: QuestionResult[];

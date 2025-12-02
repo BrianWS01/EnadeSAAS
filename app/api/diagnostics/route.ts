@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Curso não encontrado" }, { status: 404 });
     }
 
-    const analysis = DiagnosticsEngine.generateAnalysis(course, course.enadeResults);
-    const recommendations = DiagnosticsEngine.generateRecommendations(course, course.enadeResults);
-    const risk = DiagnosticsEngine.assessRisk(course.enadeResults);
+    const analysis = DiagnosticsEngine.generateAnalysis(course, course.enadeResults as any);
+    const recommendations = DiagnosticsEngine.generateRecommendations(course, course.enadeResults as any);
+    const risk = DiagnosticsEngine.assessRisk(course.enadeResults as any);
 
     const diagnostic = await prisma.diagnostic.create({
       data: {
