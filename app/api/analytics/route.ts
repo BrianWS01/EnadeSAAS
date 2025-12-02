@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Curso não encontrado" }, { status: 404 });
     }
 
-    const results = course.enadeResults;
+    const results = course.enadeResults as any;
     const trend = IndicatorsEngine.calculateTrend(results);
     const hasDecline = IndicatorsEngine.detectDecline(results);
     const hasGrowth = IndicatorsEngine.detectGrowth(results);
