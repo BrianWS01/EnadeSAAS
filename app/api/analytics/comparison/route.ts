@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { Course, Institution, EnadeResult } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,9 +54,14 @@ export async function GET(request: NextRequest) {
       take: 10,
     });
 
+    type CourseWithRelations = Course & {
+      institution: Institution;
+      enadeResults: EnadeResult[];
+    };
+
     const comparisonData = comparableCourses
-      .filter((c) => c.enadeResults.length > 0)
-      .map((c) => ({
+      .filter((c: CourseWithRelations) => c.enadeResults.length > 0)
+      .map((c: CourseWithRelations) => ({
         institutionName: c.institution.name,
         score: c.enadeResults[0].generalNote,
         year: c.enadeResults[0].year,
