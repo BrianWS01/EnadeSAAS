@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Instituição de Ensino Superior
+model Institution {
+  id        String   @id @default(cuid())
+  name      String
+  code      String   @unique
+  type      String   // Pública, Privada, etc
+  state     String
+  region    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  courses Course[]
+  users   User[]
+}
+
+// Usuário do sistema
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String
+  password      String
+  role          String   @default("coordinator") // coordinator, admin, analyst
+  institutionId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+}
+
+// Curso
+model Course {
+  id            String   @id @default(cuid())
+  name          String
+  code          String   // Código do curso no ENADE
+  area          String
+  level         String   // Graduação, Tecnólogo, etc
+  institutionId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  institution  Institution     @relation(fields: [institutionId], references: [id])
+  enadeResults EnadeResult[]
+  alerts       Alert[]
+  diagnostics  Diagnostic[]
+
+  @@unique([code, institutionId])
+}
+
+// Resultado ENADE de um curso em um ano
+model EnadeResult {
+  id                   String   @id @default(cuid())
+  courseId             String
+  year                 Int
+  generalNote          Float?   // Nota geral do curso
+  generalFormation     Float?   // Formação Geral (FG)
+  specificKnowledge    Float?   // Conhecimento Específico (CE)
+  idd                  Float?   // Indicador de Diferença de Desempenho
+  studentsRegistered   Int?     // Alunos inscritos
+  studentsParticipated Int?     // Alunos que participaram
+  absenceRate          Float?   // Taxa de ausência
+  nationalAverage      Float?   // Média nacional do curso
+  regionalAverage      Float?   // Média regional do curso
+  stateAverage         Float?   // Média estadual do curso
+  rawData              Json?    // Dados brutos em JSON
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  course       Course        @relation(fields: [courseId], references: [id])
+  competencies Competency[]
+  questionResults QuestionResult[]
+
+  @@unique([courseId, year])
+  @@index([year])
+}
+
+// Competências/Dimensões avaliadas no ENADE
+model Competency {
+  id            String  @id @default(cuid())
+  enadeResultId String
+  name          String  // Nome da dimensão/competência
+  code          String  // Código da dimensão
+  score         Float   // Nota nesta dimensão
+  description   String?
+
+  enadeResult EnadeResult @relation(fields: [enadeResultId], references: [id])
+}
+
+// Resultado por questão do ENADE
+model QuestionResult {
+  id            String  @id @default(cuid())
+  enadeResultId String
+  questionNumber Int
+  questionType  String  // objetiva, discursiva, fg, ce
+  correctRate   Float?  // Taxa de acerto (%)
+  averageScore  Float?  // Nota média na questão
+  topic         String? // Tema da questão
+  difficulty    String? // Fácil, Médio, Difícil
+
+  enadeResult EnadeResult @relation(fields: [enadeResultId], references: [id])
+}
+
+// Alertas automáticos detectados pelo sistema
+model Alert {
+  id          String   @id @default(cuid())
+  courseId    String
+  type        String   // decline, growth, below_average, risk
+  severity    String   // low, medium, high
+  title       String
+  description String
+  year        Int
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@index([courseId, isRead])
+}
+
+// Diagnósticos gerados por IA
+model Diagnostic {
+  id          String   @id @default(cuid())
+  courseId    String
+  year        Int
+  type        String   // analysis, recommendation, risk_assessment
+  content     String   @db.Text
+  generatedBy String   // ai, system, manual
+  createdAt   DateTime @default(now())
+
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@index([courseId, year])
+}
+
+// Upload de dados do ENADE
+model DataUpload {
+  id              String   @id @default(cuid())
+  fileName        String
+  fileSize        Int
+  year            Int
+  status          String   // pending, processing, completed, failed
+  recordsImported Int      @default(0)
+  errorLog        String?  @db.Text
+  uploadedBy      String
+  createdAt       DateTime @default(now())
+  completedAt     DateTime?
+
+  @@index([status, createdAt])
+}
