@@ -5,10 +5,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen">
       <Sidebar />
-      <div className="pl-64">
+      <div className="lg:pl-64">
         <Header />
         <main className="pt-16">
-          <div className="p-6">{children}</div>
+          <div className="p-4 sm:p-6">{children}</div>
         </main>
       </div>
     </div>

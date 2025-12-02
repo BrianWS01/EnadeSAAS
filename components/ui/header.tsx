@@ -5,8 +5,11 @@ import { Button } from "./button";
 
 export function Header() {
   return (
-    <header className="fixed left-64 right-0 top-0 z-30 border-b bg-card">
-      <div className="flex h-16 items-center justify-between px-6">
+    <header className="fixed left-0 right-0 top-0 z-30 border-b bg-card lg:left-64">
+      <div className="flex h-16 items-center justify-between px-4 sm:px-6">
+        {/* Spacer for mobile menu button */}
+        <div className="w-10 lg:hidden" />
+
         <div className="flex flex-1 items-center gap-4">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
