@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, action } = body;
+    const { email, action } = body;
 
     if (action === "login") {
       const user = await prisma.user.findUnique({

@@ -8,7 +8,6 @@ import {
   ArrowLeft,
   Download,
   AlertTriangle,
-  TrendingUp,
   FileText,
 } from "lucide-react";
 import Link from "next/link";
@@ -71,7 +70,7 @@ Recomendações:
 - Investir em melhorias contínuas na formação geral
 - Monitorar o IDD para evitar quedas futuras`;
 
-export default function CourseDetailPage({ params }: { params: { id: string } }) {
+export default function CourseDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

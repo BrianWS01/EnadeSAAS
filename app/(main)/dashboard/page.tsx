@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { KPICard } from "@/components/ui/kpi-card";
 import { HistoricalLineChart } from "@/components/charts/line-chart";
-import { AlertTriangle, TrendingUp, GraduationCap, BarChart3 } from "lucide-react";
+import { AlertTriangle, TrendingUp } from "lucide-react";
 import type { KPIData, HistoricalData } from "@/types";
 
 const mockKPIs: KPIData[] = [
