@@ -240,6 +240,21 @@ export default function LoginPage() {
           </Card>
         </div>
       </div>
+
+      {/* Footer com crédito */}
+      <div className="mt-8 text-center">
+        <p className="text-sm text-muted-foreground">
+          Desenvolvido por{" "}
+          <a
+            href="https://brianws01.github.io/WoodCompany/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary hover:underline"
+          >
+            WoodCompany
+          </a>
+        </p>
+      </div>
     </div>
   );
 }
