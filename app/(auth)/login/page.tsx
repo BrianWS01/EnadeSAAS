@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, LogIn, Mail, Lock, BarChart3 } from "lucide-react";
+import { Eye, EyeOff, LogIn, Mail, Lock, BarChart3, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -18,11 +20,13 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulação de login
-    setTimeout(() => {
-      setIsLoading(false);
+    const success = await login(email, password);
+
+    if (success) {
       router.push("/dashboard");
-    }, 1500);
+    } else {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,6 +104,32 @@ export default function LoginPage() {
 
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
+                {/* Mensagem de erro */}
+                {error && (
+                  <div className="flex items-center gap-2 rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-500">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                {/* Credenciais de teste */}
+                <div className="rounded-lg border border-blue-500/50 bg-blue-500/10 p-3">
+                  <p className="mb-2 text-xs font-semibold text-blue-500">
+                    💡 Credenciais de Teste:
+                  </p>
+                  <div className="space-y-1 text-xs text-muted-foreground">
+                    <p>
+                      <strong>Admin:</strong> admin@enade.com / admin123
+                    </p>
+                    <p>
+                      <strong>Coordenador:</strong> coordenador@enade.com / coord123
+                    </p>
+                    <p>
+                      <strong>Analista:</strong> analista@enade.com / analista123
+                    </p>
+                  </div>
+                </div>
+
                 {/* Email */}
                 <div className="space-y-2">
                   <label htmlFor="email" className="text-sm font-medium">

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   GraduationCap,
@@ -12,8 +12,10 @@ import {
   Settings,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 const menuItems = [
   {
@@ -48,9 +50,48 @@ const menuItems = [
   },
 ];
 
+function UserProfile({ isMobile, onClose }: { isMobile: boolean; onClose: () => void }) {
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    onClose();
+    router.push("/login");
+  };
+
+  if (!user) return null;
+
+  return (
+    <div className="border-t p-4">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+          {user.name.charAt(0).toUpperCase()}
+        </div>
+        <div className="flex-1 overflow-hidden">
+          <p className="truncate text-sm font-medium">{user.name}</p>
+          <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          title="Sair"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function Sidebar() {
   const pathname = usePathname();
+  const { checkAuth } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   return (
     <>
@@ -106,17 +147,7 @@ export function Sidebar() {
             })}
           </nav>
 
-          <div className="border-t p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                U
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <p className="truncate text-sm font-medium">Usuário</p>
-                <p className="truncate text-xs text-muted-foreground">usuario@instituicao.br</p>
-              </div>
-            </div>
-          </div>
+          <UserProfile isMobile={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         </div>
       </aside>
     </>
